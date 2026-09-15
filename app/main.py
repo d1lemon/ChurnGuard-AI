@@ -1,3 +1,4 @@
+
 from pathlib import Path
 from datetime import datetime, timezone
 
@@ -9,10 +10,6 @@ from app.schemas import CustomerInput
 from app.database import get_connection, initialize_database
 
 
-# --------------------------------------------------
-# FASTAPI APPLICATION
-# --------------------------------------------------
-
 app = FastAPI(
     title="Customer Churn Prediction API",
     description="API for predicting customer churn using a machine learning model",
@@ -20,51 +17,27 @@ app = FastAPI(
 )
 
 
-# --------------------------------------------------
-# MODEL
-# --------------------------------------------------
-
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 MODEL_PATH = BASE_DIR / "model" / "customer_churn_model.joblib"
 
 model = joblib.load(MODEL_PATH)
 
-
-# --------------------------------------------------
-# DATABASE
-# --------------------------------------------------
-
 initialize_database()
 
 
-# --------------------------------------------------
-# HOME
-# --------------------------------------------------
-
 @app.get("/")
 def home():
-
     return {
         "message": "Customer Churn Prediction API is running"
     }
 
 
-# --------------------------------------------------
-# HEALTH CHECK
-# --------------------------------------------------
-
 @app.get("/health")
 def health_check():
-
     return {
         "status": "healthy"
     }
 
-
-# --------------------------------------------------
-# PREDICTION
-# --------------------------------------------------
 
 @app.post("/predict")
 def predict(customer: CustomerInput):
@@ -82,27 +55,18 @@ def predict(customer: CustomerInput):
     )
 
     if churn_probability >= 0.70:
-
         risk_level = "HIGH"
-
     elif churn_probability >= 0.40:
-
         risk_level = "MEDIUM"
-
     else:
-
         risk_level = "LOW"
-
 
     timestamp = datetime.now(
         timezone.utc
     ).isoformat()
 
-
     conn = get_connection()
-
     cursor = conn.cursor()
-
 
     cursor.execute(
         """
@@ -124,11 +88,8 @@ def predict(customer: CustomerInput):
         )
     )
 
-
     conn.commit()
-
     conn.close()
-
 
     return {
         "prediction": prediction,
@@ -141,17 +102,11 @@ def predict(customer: CustomerInput):
     }
 
 
-# --------------------------------------------------
-# GET ALL PREDICTIONS
-# --------------------------------------------------
-
 @app.get("/predictions")
 def get_predictions():
 
     conn = get_connection()
-
     cursor = conn.cursor()
-
 
     cursor.execute(
         """
@@ -167,43 +122,27 @@ def get_predictions():
         """
     )
 
-
     rows = cursor.fetchall()
-
     conn.close()
 
-
     predictions = []
-
 
     for row in rows:
 
         predictions.append({
-
             "prediction_id": row[0],
             "timestamp": row[1],
             "model_version": row[2],
             "prediction": row[3],
             "churn_probability": row[4],
             "risk_level": row[5]
-
         })
 
-
     return {
-
-        "total_predictions": len(
-            predictions
-        ),
-
+        "total_predictions": len(predictions),
         "predictions": predictions
-
     }
 
-
-# --------------------------------------------------
-# GET ONE PREDICTION
-# --------------------------------------------------
 
 @app.get("/predictions/{prediction_id}")
 def get_prediction(
@@ -211,9 +150,7 @@ def get_prediction(
 ):
 
     conn = get_connection()
-
     cursor = conn.cursor()
-
 
     cursor.execute(
         """
@@ -232,11 +169,8 @@ def get_prediction(
         )
     )
 
-
     row = cursor.fetchone()
-
     conn.close()
-
 
     if row is None:
 
@@ -245,14 +179,11 @@ def get_prediction(
             detail="Prediction not found"
         )
 
-
     return {
-
         "prediction_id": row[0],
         "timestamp": row[1],
         "model_version": row[2],
         "prediction": row[3],
         "churn_probability": row[4],
         "risk_level": row[5]
-
     }

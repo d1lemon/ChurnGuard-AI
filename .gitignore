@@ -3,4 +3,4 @@ __pycache__/
 *.db
 .env
 uvicorn.log
-uvicorn.log
+uvicorn_8001.log

@@ -1,16 +1,22 @@
 
 import os
 import sqlite3
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 DATABASE_NAME = os.getenv(
     "DATABASE_PATH",
-    "predictions.db")
+    str(BASE_DIR / "predictions.db")
+)
+
 
 def get_connection():
     """
     Create and return a connection to the SQLite database.
     """
     return sqlite3.connect(DATABASE_NAME)
+
 
 def initialize_database():
     """
