@@ -150,3 +150,47 @@ Stop a container:
 ```bash
 docker stop <container_id>
 ```
+
+## Running with Docker
+
+### Build the Docker Image
+
+From the project directory, run:
+
+```bash
+docker build -t churnguard-ai .
+```
+
+### Run the Docker Container
+
+```bash
+docker run -p 8000:8000 churnguard-ai
+```
+
+The API will be available at:
+
+```text
+http://localhost:8000
+```
+
+### Interactive API Documentation
+
+Open:
+
+```text
+http://localhost:8000/docs
+```
+
+### Stop the Docker Container
+
+See running containers:
+
+```bash
+docker ps
+```
+
+Stop a container:
+
+```bash
+docker stop <container_id>
+```
